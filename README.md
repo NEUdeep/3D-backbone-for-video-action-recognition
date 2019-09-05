@@ -1,2 +1,2 @@
 # 3D-backbone-for-video-action-recognition
-3D backbone  for video action recognition
+3D backbone for video action recognition, the new model will come soon...
