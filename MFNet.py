@@ -162,7 +162,7 @@ class MFNET_3D(nn.Module):
             logging.info("Network:: graph initialized, use random inilization!")
 
     def forward(self, x):
-        assert x.shape[2] == 8 # number of concate frames in axis=2.
+        assert x.shape[2] == 16 # number of concate frames in axis=2.
 
         h = self.conv1(x)   # x224 -> x112
         h = self.maxpool(h) # x112 ->  x56
@@ -174,6 +174,7 @@ class MFNET_3D(nn.Module):
 
         h = self.tail(h)
         h = self.globalpool(h)
+        print(h.shape)
 
         h = h.view(h.shape[0], -1)
         h = self.fc(h)
@@ -185,7 +186,8 @@ if __name__ == "__main__":
     logging.getLogger().setLevel(logging.DEBUG)
     # ---------
     net = MFNET_3D(num_classes=6, pretrained=False)
-    data = torch.autograd.Variable(torch.randn(1,3,16,224,224))
+    data = torch.autograd.Variable(torch.randn(2,3,16,224,224))
     #print(data.size()) # 没有意义，因为data是构造的，不是真实的；只是一个例子，说明网络需要什么样的input；
     output = net(data)
+    print(output.shape)
     torch.save({'state_dict': net.state_dict()}, './tmp.pth')

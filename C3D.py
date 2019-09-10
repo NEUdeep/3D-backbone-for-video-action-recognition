@@ -6,8 +6,6 @@
 
 import torch
 import torch.nn as nn
-#import mypath as Path # pre-trained的模型的地址；
-
 
 
 class C3D(nn.Module):
@@ -30,9 +28,9 @@ class C3D(nn.Module):
 
         self.conv5a = nn.Conv3d(512, 512, kernel_size=(3, 3, 3), padding=(1, 1, 1))
         self.conv5b = nn.Conv3d(512, 512, kernel_size=(3, 3, 3), padding=(1, 1, 1))
-        self.pool5 = nn.MaxPool3d(kernel_size=(2, 2, 2), stride=(2, 2, 2), padding=(0, 1, 1))
+        self.pool5 = nn.MaxPool3d(kernel_size=(2, 2, 2), stride=(2, 16, 16), padding=(0, 1, 1))
 
-        self.fc6 = nn.Linear(8192,4096)
+        self.fc6 = nn.Linear(512,4096)
         self.fc7 = nn.Linear(4096,4096)
         self.fc8 =  nn.Linear(4096,num_classes)
 
@@ -62,8 +60,10 @@ class C3D(nn.Module):
         x = self.relu(self.conv5a(x))
         x = self.relu(self.conv5b(x))
         x = self.pool5(x)
+        
 
-        x = x.view(-1, 8192)
+        x = x.view(x.shape[0], -1)
+        print(x.shape)
         x = self.relu(self.fc6(x))
         x = self.dropout(x)
         x = self.relu(self.fc7(x))
@@ -152,8 +152,8 @@ def get_10x_lr_params(model):
     
 
 if __name__ == "__main__": # 对自己的网络进行测试的入口；当该文件被调用的时候，不会执行该模块；当不被调用，它可以自己原地执行；进行测试；
-    data = torch.autograd.Variable(torch.randn(1,3,16,224,224))
+    data = torch.autograd.Variable(torch.randn(2,3,16,224,224)) #torch.rand(N, C{in}, D{in}, H{in}, W{in}).N is batch.
     net = C3D(num_classes=101,pretrained=False)
     output = net.forward(data)
-    print(output.shape) # torch.Size([4, 101])
+
 
