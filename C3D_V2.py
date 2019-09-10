@@ -61,7 +61,6 @@ class C3D(nn.Module):
         
 
         x = x.view(x.shape[0], -1)
-        print(x.shape)
         x = self.relu(self.fc6(x))
         return x
 
